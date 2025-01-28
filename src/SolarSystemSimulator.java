@@ -2,7 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Line2D;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class SolarSystemSimulator extends JPanel {
 
@@ -14,6 +15,8 @@ public class SolarSystemSimulator extends JPanel {
     private boolean runSim = false;
 
     private final CelestialBody[] bodies = new CelestialBody[2];
+
+    private CelestialBody selectedBody;
 
 
     public SolarSystemSimulator(){
@@ -46,9 +49,27 @@ public class SolarSystemSimulator extends JPanel {
         bodies[1] = moon;
 
 
+
         for(CelestialBody body : bodies){
             body.awake();
         }
+
+        // Mouse listener for selecting planets
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                for (CelestialBody body : bodies) {
+                    if (body.isClicked(e.getX(), e.getY())) {
+                        selectedBody = body;
+                        editBodyWindow(body);
+                        repaint();
+                        return;
+                    }
+                }
+                selectedBody = null;
+                repaint();
+            }
+        });
 
 
         // Animation Timer
@@ -62,7 +83,7 @@ public class SolarSystemSimulator extends JPanel {
                 }
                 repaint();
                 time += Universe.TIMESTEP;
-                System.out.println(time);
+                //System.out.println(time);
             }
         });
         timer.start();
@@ -78,10 +99,8 @@ public class SolarSystemSimulator extends JPanel {
 
         for(CelestialBody body : bodies){
             draw(body, g2d);
-            if(!runSim){
-                drawLine(body, g2d);
-            }
         }
+
 
 
     }
@@ -97,11 +116,39 @@ public class SolarSystemSimulator extends JPanel {
 
     }
 
-    public static void drawLine(CelestialBody body, Graphics2D g2d){
-        Line2D lin = new Line2D.Float(100, 100, 250, 260);
-        g2d.draw(lin);
-    }
+    private void editBodyWindow(CelestialBody body) {
+        JFrame bodyFrame = new JFrame("Edit " + body.name);
+        bodyFrame.setSize(300, 150);
+        bodyFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+
+        JLabel sizeLabel = new JLabel("Adjust size of " + body.name + ":");
+        JSlider sizeSlider = new JSlider(1, 50, body.radius);
+
+        JLabel massLabel = new JLabel("Adjust size of " + body.name + ":");
+        JSlider massSlider = new JSlider(1, 500, (int) body.mass);
+
+        sizeSlider.addChangeListener(e -> {
+            body.radius = sizeSlider.getValue();
+            repaint();
+        });
+
+        massSlider.addChangeListener(e -> {
+            body.mass = massSlider.getValue();
+            repaint();
+        });
+
+        panel.add(sizeLabel, BorderLayout.NORTH);
+        panel.add(sizeSlider, BorderLayout.NORTH);
+
+        panel.add(massLabel, BorderLayout.CENTER);
+        panel.add(massSlider, BorderLayout.CENTER);
+
+        bodyFrame.add(panel);
+        bodyFrame.setVisible(true);
+    }
 
 
     private void resetSimulator(){

@@ -77,6 +77,8 @@ public class CelestialBody {
         return name + "'s Position: " + currentPosition.toString();
     }
 
-
+    public boolean isClicked(int mouseX, int mouseY) {
+        return Math.pow(mouseX - currentPosition.x, 2) + Math.pow(mouseY - currentPosition.y - (2 * radius), 2) <= Math.pow(radius, 2);
+    }
 
 }
