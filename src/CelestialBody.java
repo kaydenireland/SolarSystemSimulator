@@ -1,25 +1,30 @@
+import java.awt.*;
+
 public class CelestialBody {
 
     public String name;
     public float mass;
-    public float radius;
+    public int radius;
+    public Color color;
     public Vector2 initialVelocity;
     public Vector2 currentVelocity;
     public Vector2 position;
 
 
-    public CelestialBody(String name, float mass, float radius, Vector2 initialVelocity, Vector2 initialPosition){
+    public CelestialBody(String name, float mass, int radius, Color color, Vector2 initialVelocity, Vector2 initialPosition){
         this.name = name;
         this.mass = mass;
         this.radius = radius;
+        this.color = color;
         this.initialVelocity = initialVelocity;
         this.position = initialPosition;
     }
 
-    public CelestialBody(String name, float mass, float radius, float xVelo, float yVelo, float xPos, float yPos){
+    public CelestialBody(String name, float mass, int radius, Color color, float xVelo, float yVelo, int xPos, int yPos){
         this.name = name;
         this.mass = mass;
         this.radius = radius;
+        this.color = color;
         this.initialVelocity = new Vector2(xVelo, yVelo);
         this.position = new Vector2(xPos, yPos);
     }
@@ -28,7 +33,7 @@ public class CelestialBody {
         this.currentVelocity = initialVelocity;
     }
 
-    public void updateVelocity(CelestialBody[] allBodies, float time){
+    public void updateVelocity(CelestialBody[] allBodies, int time){
         for(CelestialBody body : allBodies){
             if(body != this){
                 float sqrDist = (float) Math.pow(this.position.distance(body.position), 2);
@@ -50,7 +55,7 @@ public class CelestialBody {
         }
     }
 
-    public void updatePosition(float time){
+    public void updatePosition(int time){
         this.position.x += currentVelocity.x * time;
         this.position.y += currentVelocity.y * time;
     }
