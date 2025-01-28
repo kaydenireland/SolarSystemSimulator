@@ -8,7 +8,8 @@ public class CelestialBody {
     public Color color;
     public Vector2 initialVelocity;
     public Vector2 currentVelocity;
-    public Vector2 position;
+    public Vector2 initialPosition;
+    public Vector2 currentPosition;
 
 
     public CelestialBody(String name, float mass, int radius, Color color, Vector2 initialVelocity, Vector2 initialPosition){
@@ -17,7 +18,7 @@ public class CelestialBody {
         this.radius = radius;
         this.color = color;
         this.initialVelocity = initialVelocity;
-        this.position = initialPosition;
+        this.initialPosition = initialPosition;
     }
 
     public CelestialBody(String name, float mass, int radius, Color color, float xVelo, float yVelo, int xPos, int yPos){
@@ -26,20 +27,21 @@ public class CelestialBody {
         this.radius = radius;
         this.color = color;
         this.initialVelocity = new Vector2(xVelo, yVelo);
-        this.position = new Vector2(xPos, yPos);
+        this.initialPosition = new Vector2(xPos, yPos);
     }
 
     public void awake(){
-        this.currentVelocity = initialVelocity;
+        this.currentVelocity = new Vector2(initialVelocity);
+        this.currentPosition = new Vector2(initialPosition);
     }
 
-    public void updateVelocity(CelestialBody[] allBodies, int time){
+    public void updateVelocity(CelestialBody[] allBodies, float time){
         for(CelestialBody body : allBodies){
             if(body != this){
-                float sqrDist = (float) Math.pow(this.position.distance(body.position), 2);
+                float sqrDist = (float) Math.pow(this.currentPosition.distance(body.currentPosition), 2);
                 Vector2 forceDir = new Vector2(
-                        Math.abs(this.position.x - body.position.x),
-                        Math.abs(this.position.y - body.position.y)
+                        (body.currentPosition.x - this.currentPosition.x),
+                        (body.currentPosition.y - this.currentPosition.y)
                 );
                 Vector2 force = new Vector2(
                         (forceDir.x * Universe.GRAVITATIONAL_CONSTANT * this.mass * body.mass) / sqrDist,
@@ -49,23 +51,27 @@ public class CelestialBody {
                         force.x / mass,
                         force.y / mass
                 );
-                currentVelocity.x = acceleration.x * time;
-                currentVelocity.y = acceleration.y;
+                currentVelocity.x += acceleration.x * time;
+                currentVelocity.y += acceleration.y * time;
             }
         }
     }
 
-    public void updatePosition(int time){
-        this.position.x += currentVelocity.x * time;
-        this.position.y += currentVelocity.y * time;
+    public void updatePosition(float time){
+        this.currentPosition.x += currentVelocity.x * time;
+        this.currentPosition.y += currentVelocity.y * time;
     }
 
-    public String velocityToString(){
-        return name + "'s Position: " + initialVelocity.toString();
+    public String initialVelocityToString(){
+        return name + "'s Initial Velocity: " + initialVelocity.toString();
+    }
+
+    public String currentVelocityToString(){
+        return name + "'s Current Velocity: " + initialVelocity.toString();
     }
 
     public String positionToString(){
-        return name + "'s Position: " + position.toString();
+        return name + "'s Position: " + currentPosition.toString();
     }
 
 

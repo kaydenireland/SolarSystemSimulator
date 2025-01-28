@@ -1,15 +1,19 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class SolarSystemSimulator extends JPanel {
 
     // Frame Dimensions
-    private static final int WIDTH = 800;
+    private static final int WIDTH = 1200;
     private static final int HEIGHT = 800;
 
-    private int time = 0;
+    private float time = 0;
+    private boolean runSim = false;
+    private boolean started = false;
 
-    private CelestialBody[] bodies = new CelestialBody[2];
+    private final CelestialBody[] bodies = new CelestialBody[2];
 
 
     public SolarSystemSimulator(){
@@ -19,19 +23,21 @@ public class SolarSystemSimulator extends JPanel {
         // Add Celestial Bodies
         CelestialBody planet = new CelestialBody(
                 "Earth",
-                20, 10,
+                250, 10,
                 Color.BLUE,
-                10, 10,
+                0, 0,
                 300, 300
         );
 
         CelestialBody moon = new CelestialBody(
                 "Luna",
-                5, 3,
+                10, 3,
                 Color.WHITE,
-                -500, 0,
-                325, 300
+                0, -5,
+                350, 300
         );
+
+
 
 
         bodies[0] = planet;
@@ -44,14 +50,18 @@ public class SolarSystemSimulator extends JPanel {
 
 
         // Animation Timer
-        Timer timer = new Timer(10, e -> {
-            for(CelestialBody body : bodies){
-               body.updateVelocity(bodies, time);
-               body.updatePosition(time);
+        Timer timer = new Timer(100, e -> {
+            if(runSim) {
+                for (CelestialBody body : bodies) {
+                    body.updateVelocity(bodies, time);
+                }
+                for (CelestialBody body : bodies) {
+                    body.updatePosition(time);
+                }
+                repaint();
+                time += Universe.TIMESTEP;
+                System.out.println(time);
             }
-            repaint();
-            time++;
-            System.out.println(time);
         });
         timer.start();
     }
@@ -74,11 +84,24 @@ public class SolarSystemSimulator extends JPanel {
     public static void draw(CelestialBody body, Graphics2D g2d){
         g2d.setColor(body.color);
         g2d.fillOval(
-                (int) body.position.x - body.radius,
-                (int) body.position.y + body.radius,
+                (int) body.currentPosition.x - body.radius,
+                (int) body.currentPosition.y + body.radius,
                 body.radius * 2,
                 body.radius * 2
         );
+    }
+
+    private void resetSimulator(){
+        runSim = false;
+        started = false;
+        time = 0;
+        for(CelestialBody body : bodies){
+            System.out.println(body.currentPosition);
+            System.out.println(body.initialPosition);
+            body.awake();
+            System.out.println(body.currentPosition);
+        }
+        repaint();
     }
 
 
@@ -86,9 +109,45 @@ public class SolarSystemSimulator extends JPanel {
         JFrame frame = new JFrame("Solar System Simulator");
         SolarSystemSimulator simulator = new SolarSystemSimulator();
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(WIDTH, HEIGHT);
-        frame.add(simulator);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        JButton startButton = new JButton("Start");
+        startButton.setPreferredSize(new Dimension(100, 40));
+        startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                simulator.runSim = true;
+                simulator.started = true;
+            }
+        });
+        JButton pauseButton = new JButton("Pause");
+        pauseButton.setPreferredSize(new Dimension(100, 40));
+        pauseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                simulator.runSim = false;
+            }
+        });
+        JButton resetButton = new JButton("Reset");
+        resetButton.setPreferredSize(new Dimension(100, 40));
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                simulator.resetSimulator();
+            }
+        });
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT)); // Align button to the right
+        buttonPanel.add(startButton);
+        buttonPanel.add(pauseButton);
+        buttonPanel.add(resetButton);
+
+        frame.setLayout(new BorderLayout());
+        frame.add(simulator, BorderLayout.CENTER);
+        frame.add(buttonPanel, BorderLayout.SOUTH);
+
         frame.setVisible(true);
     }
 
