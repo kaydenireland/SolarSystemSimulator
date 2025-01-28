@@ -10,24 +10,27 @@ public class CelestialBody {
     public Vector2 currentVelocity;
     public Vector2 initialPosition;
     public Vector2 currentPosition;
+    public BodyType type;
 
 
-    public CelestialBody(String name, float mass, int radius, Color color, Vector2 initialVelocity, Vector2 initialPosition){
+    public CelestialBody(String name, float mass, int radius, Color color, Vector2 initialVelocity, Vector2 initialPosition, BodyType type){
         this.name = name;
         this.mass = mass;
         this.radius = radius;
         this.color = color;
         this.initialVelocity = initialVelocity;
         this.initialPosition = initialPosition;
+        this.type = type;
     }
 
-    public CelestialBody(String name, float mass, int radius, Color color, float xVelo, float yVelo, int xPos, int yPos){
+    public CelestialBody(String name, float mass, int radius, Color color, float xVelo, float yVelo, int xPos, int yPos, BodyType type){
         this.name = name;
         this.mass = mass;
         this.radius = radius;
         this.color = color;
         this.initialVelocity = new Vector2(xVelo, yVelo);
         this.initialPosition = new Vector2(xPos, yPos);
+        this.type = type;
     }
 
     public void awake(){
