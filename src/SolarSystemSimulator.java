@@ -26,7 +26,7 @@ public class SolarSystemSimulator extends JPanel {
         // Add Celestial Bodies
         CelestialBody planet = new CelestialBody(
                 "Earth",
-                82, 10,
+                730, 10,
                 Color.BLUE,
                 0, 0,
                 300, 300,
@@ -35,7 +35,7 @@ public class SolarSystemSimulator extends JPanel {
 
         CelestialBody moon = new CelestialBody(
                 "Luna",
-                1, 3,
+                6, 3,
                 Color.WHITE,
                 0, -3,
                 500, 350,
@@ -122,13 +122,25 @@ public class SolarSystemSimulator extends JPanel {
         bodyFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(2,1));
+        panel.setLayout(new GridLayout(6,1));
 
         JLabel sizeLabel = new JLabel("Adjust size of " + body.name + ":");
         JSlider sizeSlider = new JSlider(1, 50, body.radius);
 
         JLabel massLabel = new JLabel("Adjust mass of " + body.name + ":");
-        JSlider massSlider = new JSlider(1, 500, (int) body.mass);
+        JSlider massSlider = new JSlider(1, 1000, (int) body.mass);
+
+        JLabel xPosLabel = new JLabel("Adjust xPos of " + body.name + ":");
+        JSlider xPosSlider = new JSlider(0, 1200, (int) body.currentPosition.x);
+
+        JLabel yPosLabel = new JLabel("Adjust yPos of " + body.name + ":");
+        JSlider yPosSlider = new JSlider(0, 800, (int) body.currentPosition.y);
+
+        JLabel xSpeedLabel = new JLabel("Adjust xSpeed of " + body.name + ":");
+        JSlider xSpeedSlider = new JSlider(-25, 25, (int) body.currentVelocity.x);
+
+        JLabel ySpeedLabel = new JLabel("Adjust ySpeed of " + body.name + ":");
+        JSlider ySpeedSlider = new JSlider(-25, 25, (int) body.currentVelocity.y);
 
         sizeSlider.addChangeListener(e -> {
             body.radius = sizeSlider.getValue();
@@ -140,11 +152,43 @@ public class SolarSystemSimulator extends JPanel {
             repaint();
         });
 
+        xPosSlider.addChangeListener(e -> {
+            body.currentPosition.x = xPosSlider.getValue();
+            repaint();
+        });
+
+        yPosSlider.addChangeListener(e -> {
+            body.currentPosition.y = yPosSlider.getValue();
+            repaint();
+        });
+
+        xSpeedSlider.addChangeListener(e -> {
+            body.currentVelocity.x = xSpeedSlider.getValue();
+            repaint();
+        });
+
+        ySpeedSlider.addChangeListener(e -> {
+            body.currentVelocity.y = ySpeedSlider.getValue();
+            repaint();
+        });
+
         panel.add(sizeLabel);
         panel.add(sizeSlider);
 
         panel.add(massLabel);
         panel.add(massSlider);
+
+        panel.add(xPosLabel);
+        panel.add(xPosSlider);
+
+        panel.add(yPosLabel);
+        panel.add(yPosSlider);
+
+        panel.add(xSpeedLabel);
+        panel.add(xSpeedSlider);
+
+        panel.add(ySpeedLabel);
+        panel.add(ySpeedSlider);
 
         bodyFrame.add(panel);
         bodyFrame.setVisible(true);
