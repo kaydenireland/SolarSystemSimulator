@@ -122,12 +122,12 @@ public class SolarSystemSimulator extends JPanel {
         bodyFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
+        panel.setLayout(new GridLayout(2,1));
 
         JLabel sizeLabel = new JLabel("Adjust size of " + body.name + ":");
         JSlider sizeSlider = new JSlider(1, 50, body.radius);
 
-        JLabel massLabel = new JLabel("Adjust size of " + body.name + ":");
+        JLabel massLabel = new JLabel("Adjust mass of " + body.name + ":");
         JSlider massSlider = new JSlider(1, 500, (int) body.mass);
 
         sizeSlider.addChangeListener(e -> {
@@ -140,11 +140,11 @@ public class SolarSystemSimulator extends JPanel {
             repaint();
         });
 
-        panel.add(sizeLabel, BorderLayout.NORTH);
-        panel.add(sizeSlider, BorderLayout.NORTH);
+        panel.add(sizeLabel);
+        panel.add(sizeSlider);
 
-        panel.add(massLabel, BorderLayout.CENTER);
-        panel.add(massSlider, BorderLayout.CENTER);
+        panel.add(massLabel);
+        panel.add(massSlider);
 
         bodyFrame.add(panel);
         bodyFrame.setVisible(true);
